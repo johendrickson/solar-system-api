@@ -1,9 +1,9 @@
 class Planet:
-    def __init__(self, id, name, description, distance_from_sun_km, amount_of_moons):
+    def __init__(self, id, name, description, distance_from_sun_mln_km, amount_of_moons):
         self.id = id
         self.name = name
         self.description = description
-        self.distance_from_sun_km = distance_from_sun_km
+        self.distance_from_sun_mln_km = distance_from_sun_mln_km
         self.amount_of_moons = amount_of_moons
 
 planets = [
