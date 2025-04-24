@@ -1,7 +1,50 @@
-from flask import Blueprint, abort, make_response
-# from app.models.planet import planets
+from flask import Blueprint, abort, make_response, request
+from app.models.planet import Planet
+from ..db import db
 
 planets_bp = Blueprint("planets_bp", __name__, url_prefix="/planets")
+
+@planets_bp.post("")
+def create_planet():
+    request_body = request.get_json()
+    name = request_body["name"]
+    description = request_body["description"]
+    distance_from_sun_mln_km = request_body["distance_from_sun_mln_km"]
+    amount_of_moons = request_body["amount_of_moons"]
+
+    new_planet = Planet(name=name, 
+                        description=description, 
+                        distance_from_sun_mln_km=distance_from_sun_mln_km, 
+                        amount_of_moons=amount_of_moons)
+    db.session.add(new_planet)
+    db.session.commit()
+
+    response = {
+        "id": new_planet.id,
+        "name": new_planet.name,
+        "description": new_planet.description,
+        "distance_from_sun_mln_km": new_planet.distance_from_sun_mln_km,
+        "amount_of_moons": new_planet.amount_of_moons,
+    }
+    return response, 201
+
+@planets_bp.get("")
+def get_all_planets():
+    query = db.select(Planet).order_by(Planet.id)
+    planets = db.session.scalars(query)
+
+    planets_response = []
+    for planet in planets:
+        planets_response.append(
+            {
+                "id": planet.id,
+                "name": planet.name,
+                "description": planet.description,
+                "distance_from_sun_mln_km": planet.distance_from_sun_mln_km,
+                "amount_of_moons": planet.amount_of_moons
+            }
+        )
+    return planets_response
 
 # @planets_bp.get("")
 # def get_all_planets():
