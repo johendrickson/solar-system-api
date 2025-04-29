@@ -30,7 +30,41 @@ def create_planet():
 
 @planets_bp.get("")
 def get_all_planets():
-    query = db.select(Planet).order_by(Planet.id)
+    query = db.select(Planet)
+
+    name_param = request.args.get("name")
+    if name_param:
+        query = query.where(Planet.name.ilike(f"%{name_param}%"))
+
+    description_param = request.args.get("description")
+    if description_param:
+        query = query.where(Planet.description.ilike(f"%{description_param}%"))
+
+    min_distance_param = request.args.get("min_distance")
+    if min_distance_param:
+        try: 
+            min_distance = float(min_distance_param)
+            query = query.where(Planet.distance_from_sun_mln_km >= min_distance)
+    
+        except ValueError:
+            pass
+
+    max_distance_param = request.args.get("max_distance")
+    if max_distance_param:
+        try: 
+            max_distance = float(max_distance_param)
+            query = query.where(Planet.distance_from_sun_mln_km <= max_distance)
+    
+        except ValueError:
+            pass
+
+    sort_param = request.args.get("sort")
+    allowed_sort_fields = ["id", "name", "distance_from_sun_mln_km", "amount_of_moons"]
+    if sort_param in allowed_sort_fields:
+        query = query.order_by(getattr(Planet, sort_param))
+    else:
+        query = query.order_by(Planet.name)
+
     planets = db.session.scalars(query)
 
     planets_response = []
