@@ -27,11 +27,9 @@ def app():
     with app.app_context():
         db.drop_all()
 
-
 @pytest.fixture
 def client(app):
     return app.test_client()
-
 
 @pytest.fixture
 def two_saved_planets(app):
