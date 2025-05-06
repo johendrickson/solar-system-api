@@ -10,9 +10,12 @@ def test_to_dict_no_missing_data():
     
     result = test_data.to_dict()
     
-    assert len(result) == 5
-    assert result["id"] == 1
-    assert result["name"] == "Jupiter"
-    assert result["description"] == "Largest planet in the solar system"
-    assert result["distance_from_sun_mln_km"] == 778
-    assert result["amount_of_moons"] == 95
+    assert len(result) == 6
+    assert result == {
+        "id": 1,
+        "name": "Jupiter",
+        "description": "Largest planet in the solar system",
+        "distance_from_sun_mln_km": 778,
+        "amount_of_moons": 95,
+        "moons": []  # Assuming no moons yet
+    }

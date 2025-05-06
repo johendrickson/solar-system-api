@@ -19,7 +19,8 @@ def test_get_one_planet(client, two_saved_planets):
         "name": "Jupiter",
         "description": "Largest planet in the solar system",
         "distance_from_sun_mln_km": 778,
-        "amount_of_moons": 95
+        "amount_of_moons": 95,
+        "moons": []
     }
     
 def test_create_one_planet(client):
@@ -37,5 +38,6 @@ def test_create_one_planet(client):
         "name": "Saturn",
         "description": "Second-largest planet with prominent rings",
         "distance_from_sun_mln_km": 1434,
-        "amount_of_moons": 83
+        "amount_of_moons": 83,
+        "moons": []
     }
