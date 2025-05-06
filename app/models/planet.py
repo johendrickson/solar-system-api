@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from ..db import db
 
 class Planet(db.Model):
@@ -8,13 +8,17 @@ class Planet(db.Model):
     distance_from_sun_mln_km: Mapped[int]
     amount_of_moons: Mapped[int]
     
+    moons = relationship('Moon', back_populates='planet', cascade='all, delete-orphan')
+    
     def to_dict(self):
-        planet_as_dict = {}
-        planet_as_dict["id"] = self.id
-        planet_as_dict["name"] = self.name
-        planet_as_dict["description"] = self.description
-        planet_as_dict["distance_from_sun_mln_km"] = self.distance_from_sun_mln_km
-        planet_as_dict["amount_of_moons"] = self.amount_of_moons
+        planet_as_dict = {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "distance_from_sun_mln_km": self.distance_from_sun_mln_km,
+            "amount_of_moons": self.amount_of_moons,
+            "moons": [moon.to_dict() for moon in self.moons]  # Includes moons in the planet's response
+        }
         
         return planet_as_dict
     

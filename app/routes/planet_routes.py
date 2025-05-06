@@ -2,6 +2,7 @@ from flask import Blueprint, abort, make_response, request, Response
 from app.models.planet import Planet
 from .route_utilities import validate_model
 from ..db import db
+from app.models.moon import Moon
 
 bp = Blueprint("planets_bp", __name__, url_prefix="/planets")
 
@@ -91,3 +92,34 @@ def delete_planet(planet_id):
     db.session.commit()
 
     return Response(status=204, mimetype="application/json")
+
+@bp.post("/<planet_id>/moons")
+def create_moon_for_planet(planet_id):
+    planet = Planet.query.get(planet_id)
+    if not planet:
+        response = {"message": f"Planet not found"}
+        abort(make_response(response, 404))
+
+    request_body = request.get_json()
+
+    try:
+        new_moon = Moon.from_dict(request_body, planet_id)
+    except KeyError as error:
+        response = {"message": f"Invalid request: missing {error.args[0]}"}
+        abort(make_response(response, 400))
+
+    db.session.add(new_moon)
+    db.session.commit()
+
+    return new_moon.to_dict(), 201
+
+@bp.get("/<planet_id>/moons")
+def get_moons_for_planet(planet_id):
+    planet = Planet.query.get(planet_id)
+    if not planet:
+        response = {"message": f"Planet not found"}
+        abort(make_response(response, 404))
+
+    moons = [moon.to_dict() for moon in planet.moons]
+
+    return moons, 200
